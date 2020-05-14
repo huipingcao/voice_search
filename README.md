@@ -1,7 +1,7 @@
 # voice_search
 
 ## Introduction 
-The Voice System is helping users to find the papers easily, there are two  ways to input query, first way you can input the query into the input bar, the second way is the user can click the "click to speak" bottom and speak the query, the system will translate the voice to text, and text will be used for the input query. And here has another parameter called "Sensitivity", this parameter can control the results to focus more on the words or the topics. 
+The Voice System is helping people to find the papers easily. There are two  ways to input query, first way you can input the query by using the input bar, the second way is the user can click the "click to speak" bottom and speak the query, the system will translate the voice to text, and the text will be used for the input query. And here has another parameter called "Sensitivity", this parameter can control the results to focus more on the words or the topics. 
 
 Here's a Flow Chart for this system shows how does this system works. In the Flow Chart LDA represents "Latent Dirichlet Allocation", TFIDF represents "term frequency–inverse document frequency". 
 ![image](https://github.com/huipingcao/voice_search/blob/master/Flow_Chart.png)
