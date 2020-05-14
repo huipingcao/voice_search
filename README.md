@@ -4,6 +4,8 @@
 The Voice System is helping users to find the papers easily, there are two  ways to input query, first way is input the query into the input bar, second way is the user can click the "click to speak" bottom and speak the query, the system will translate the voice to text, and text will be used for the input query. Here has another parameter called "Sensitivity", this parameter can control the results to focus more on the words or the topics. 
 
 Here's a Flow Chart for this system shows how does this system works. In the Flow Chart LDA represents "Latent Dirichlet Allocation", TFIDF represents "term frequency–inverse document frequency". 
+![image]
+(https://github.com/huipingcao/voice_search/blob/master/Flow%20Chart%20.jpg)
 
 ## Run the System 
 Before running this system, please make sure your file directory is exactly same as the Github and the python version should be 3.5 or higher, you also need to install the following python libraries: pickle, gensim, nltk, flask, sklearn. Please make sure you download the whole nltk words libraries, you can use common line: '''nltk.download()''' to download the libraries. 
