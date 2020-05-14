@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Voice System</title>
+    <link rel="icon" href="Logo.ico" type="image/x-icon"/> <!-- set the logo -->
+</head>
+
+<style>
+    .header{
+            width:100%;
+            height:55px;
+            background: #323232;
+        }
+    .groupInput{
+        align: center;
+        face : "Century Gothic, Arial";
+        font-weight: lighter;
+        color: white;
+        font-size: 38px
+    }
+    .inputBar{
+        width:430px;
+        height:35px;
+        background: #323232;
+        border: #323232;
+        padding-right: 100px;
+        face : "Century Gothic, Arial";
+        font-weight: lighter;
+        color: white;
+        font-size: 50%;
+    }
+    .inputLamdbaBar{
+        width:100px;
+        height:35px;
+        background: #323232;
+        border: #323232;
+        padding-right: 100px;
+        face : "Century Gothic, Arial";
+        font-weight: lighter;
+        color: white;
+        font-size: 50%;
+    }
+    .Words{
+        size: 10px;
+        face : "Century Gothic, Arial";
+    }
+
+    .SearchButtom{
+        height:35px;
+        width: 82px;
+        background-color: #323232;
+        color:white;
+        border-width: 0;
+        font-size: 11px;
+    }
+
+    .slidecontainer {
+        width: 100%;
+    }
+    .slider {
+      -webkit-appearance: none;
+      width: 100px;
+      height: 8px;
+      border-radius: 5px;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+    }
+
+    .slider:hover {
+      opacity: 1;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #891216;
+      cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background: #4CAF50;
+      cursor: pointer;
+    }
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+    var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+    var recognition = new SpeechRecognition();
+    GetText="";
+    recognition.onresult = function(event) {
+        if (event.results.length > 0) {
+            text.value = event.results[0][0].transcript;
+            GetText = text.value;
+        }
+        return GetText;
+    };
+    jQuery.support.cors = true;
+    //
+
+
+    // Get the data from the web server
+    var result=[];
+    var datasize = 0;
+    var result_Name = "", result_url = "", result_author = "", result_Year = "";
+    var arr_name, arr_url, arr_Year, arr_author;
+    var outputString = "";
+    function getData(){
+        var query = JSON.stringify(document.getElementById("text").value);
+        var lamdba = JSON.stringify(document.getElementById("myRange").value);
+        var sendValue = "";
+        sendValue = query + ";" + lamdba;
+        document.getElementById("demo").innerHTML = '<font size = "5" >Loading...</font>';
+        result = [];
+        result_Name = "";
+        result_author = "";
+        result_url = "";
+        result_Year = "";
+        datasize = 0;
+        $.ajax(
+            {
+                url:'/hello/world',
+                type:'POST',
+                data: sendValue,
+                dataType: 'json',
+                success: function(data)
+                {
+                    outputString = "";
+                    $.each(data, function(i,n){
+                        datasize = n.length;
+                        for(var index = 0; index<datasize; index++){
+                            console.log(n[index]["title"]);
+                            result_Name += n[index]["title"]+";";
+                            result_url += GetLink(n[index]["link"])+";";
+                            result_author += AuthorsName(n[index]["author"])+";";
+                            result_Year += n[index]["year"]+";";
+                        }
+                    });
+                    arr_name = result_Name.split(";");
+                    arr_url = result_url.split(";");
+                    arr_author = result_author.split(";");
+                    arr_Year = result_Year.split(";");
+                    outputString += "We found total "+ datasize + " results." + '</br></br>';
+                    for(var k=0; k<datasize; k++){
+                        var temp_url = urltoLink(arr_url[k]);
+                        outputString += "[" +(k+1)+ "]"+" The title is: " + arr_name[k] + '</br>' +"The article is written by: " + arr_author[k] + " in " + arr_Year[k] + ".</br> The link is: " + temp_url +'</br></br>';
+                    }
+                    document.getElementById("demo").innerHTML = outputString;
+                },
+                error: function (xhr, status, error) {
+                console.log(error);
+                }
+            });
+        /**
+         * @return {string}
+         */
+        function AuthorsName(str){
+            var temp = str.split("'");
+            var result = "";
+            var index = 3;
+            while(index < temp.length){
+                result += temp[index] + ", ";
+                index += 4
+            }
+            return(result)
+        }
+
+        function GetLink(str){
+            var temp = str.split("'");
+            return(temp[7])
+        }
+
+
+    }
+
+    function urltoLink(str){
+    var reg = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/g;
+
+    str = str.replace(reg, function(website){
+        return "<a href='" + website +"' target='_blank'>" + website + "</a>";
+    });
+    return str;
+    }
+
+    function speak() {
+            var readResult = "We found total "+ datasize + " results.";
+            var u = new SpeechSynthesisUtterance();
+            u.text = readResult;
+            u.lang = 'en-US';
+            u.rate = 0.9;
+            speechSynthesis.speak(u);
+            console.log(readResult);
+        }
+
+</script>
+
+
+
+<body style="background-color: #E8E3E3">
+
+  <!--<form method="post" action="doform">
+         <div>
+            <label for="Text">Text:</label>
+            <input type="text" id="Text" name="Tex
+        </div>
+        <button type="submit">Submit</button>
+        <input type="search" id="text" name="text" size=60>
+        <input type="button" value="Click to Speak" onclick="recognition.start()">
+    </form>-->
+    <div class="header">
+        <div class="groupInput">
+            Voice System
+            &nbsp &nbsp
+            <input placeholder="Search" class="inputBar" id="text" name="text" size=60>
+            &nbsp
+            <font size=3>Sensitivity</font>
+            <font size=2>Words</font>
+            <input type="range" min="0" max="10" value="5" class="slider" id="myRange">
+            <font size=2 >Topic</font>
+            &nbsp
+            <input class="SearchButtom" type="button" value="Click to Speak" onclick="recognition.start()">
+            <input class="SearchButtom" type="button" value="Submit" onclick="getData()">
+             <input class="SearchButtom" type="button" value="Speak results" onclick="speak()">
+        </div>
+    </div>
+    <h1> The results are: </h1>
+    <div id="demo"></div>
+<div id="footer" style="background-color:#891216;clear:both;text-align:center; color: white">New Mexico State University</div>
+</body>
+
+</html>
